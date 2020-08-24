@@ -9,4 +9,8 @@ public class MultiWorldConfiguration {
 	public void with(BaseSystem baseSystem) {
 		this.systems.add(baseSystem);
 	}
+
+	public Bag<BaseSystem> getSystems() {
+		return systems;
+	}
 }

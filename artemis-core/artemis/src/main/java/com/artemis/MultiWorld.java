@@ -27,7 +27,7 @@ public class MultiWorld {
         this.initSystems(multiWorldConfiguration.systems);
     }
 
-    private void initSystems(Bag<BaseSystem> systems) {
+    protected void initSystems(Bag<BaseSystem> systems) {
         for (BaseSystem staticBaseSystem : systems) {
             staticBaseSystem.setMultiWorld(this);
             this.registerMultiBaseSystem(staticBaseSystem);
