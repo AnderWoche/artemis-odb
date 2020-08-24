@@ -418,6 +418,10 @@ public class World {
 		return cm.getMapper(type);
 	}
 
+	public MultiWorld getMultiWorld() {
+		return multiWorld;
+	}
+
 	/**
 	 * @return Injector responsible for dependency injection.
 	 */
