@@ -29,6 +29,8 @@ public class WorldConfigurationBuilder {
     private final InjectionCache cache;
     private SystemInvocationStrategy invocationStrategy;
 
+    private MultiWorld multiWorld;
+
     public WorldConfigurationBuilder() {
         reset();
         cache = InjectionCache.sharedCache.get();
@@ -42,6 +44,7 @@ public class WorldConfigurationBuilder {
     public WorldConfiguration build() {
         appendPlugins();
         final WorldConfiguration config = new WorldConfiguration();
+        config.multiWorld = multiWorld;
         registerSystems(config);
         registerFieldResolvers(config);
         registerInvocationStrategies(config);
@@ -103,6 +106,7 @@ public class WorldConfigurationBuilder {
      * Reset builder
      */
     private void reset() {
+        this.multiWorld = null;
         invocationStrategy = null;
         systems = new Bag<>();
         fieldResolvers = new Bag<>();
@@ -279,6 +283,11 @@ public class WorldConfigurationBuilder {
 
             this.systems.add(new ConfigurationElement<BaseSystem>(system, priority));
         }
+    }
+
+    public WorldConfigurationBuilder setMultiWorld(MultiWorld multiWorld) {
+        this.multiWorld = multiWorld;
+        return this;
     }
 
     /**

@@ -39,7 +39,7 @@ public abstract class IteratingSystem extends BaseEntitySystem {
 
 	/** @inheritDoc */
 	@Override
-	protected final void processSystem() {
+	protected void processSystem() {
 		IntBag actives = subscription.getEntities();
 		int[] ids = actives.getData();
 		for (int i = 0, s = actives.size(); s > i; i++) {

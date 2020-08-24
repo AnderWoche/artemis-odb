@@ -39,6 +39,8 @@ public final class WorldConfiguration {
 	private boolean alwaysDelayComponentRemoval = false;
 	private Set<Class<? extends BaseSystem>> registered = new HashSet<Class<? extends BaseSystem>>();
 
+	protected MultiWorld multiWorld;
+
 	public WorldConfiguration() {
 		// reserving space for core managers
 		systems.add(null); // ComponentManager
@@ -154,6 +156,10 @@ public final class WorldConfiguration {
 		return this;
 	}
 
+	public void setMultiWorld(MultiWorld multiWorld) {
+		this.multiWorld = multiWorld;
+	}
+
 	void initialize(World world, Injector injector, AspectSubscriptionManager asm) {
 		if (invocationStrategy == null)
 			invocationStrategy = new InvocationStrategy();
@@ -162,6 +168,8 @@ public final class WorldConfiguration {
 
 		world.invocationStrategy = invocationStrategy;
 
+		world.multiWorld = this.multiWorld != null ? this.multiWorld : new MultiWorld();
+
 		systems.set(COMPONENT_MANAGER_IDX, world.getComponentManager());
 		systems.set(ENTITY_MANAGER_IDX, world.getEntityManager());
 		systems.set(ASPECT_SUBSCRIPTION_MANAGER_IDX, asm);
@@ -169,6 +177,7 @@ public final class WorldConfiguration {
 		for (BaseSystem system : systems) {
 			world.partition.systems.put(system.getClass(), system);
 			system.setWorld(world);
+			system.setMultiWorld(world.multiWorld);
 			if (ClassReflection.isInstance(Manager.class, system)) {
 				((Manager) system).registerManager();
 			}

@@ -20,6 +20,9 @@ public abstract class BaseSystem {
 	@SkipWire
 	protected World world;
 
+	@SkipWire
+	protected MultiWorld multiWorld;
+
 	public BaseSystem() {}
 
 	/**
@@ -126,6 +129,14 @@ public abstract class BaseSystem {
 	 */
 	protected World getWorld() {
 		return world;
+	}
+
+	protected void setMultiWorld(MultiWorld multiWorld) {
+		this.multiWorld = multiWorld;
+	}
+
+	protected MultiWorld getMultiWorld() {
+		return multiWorld;
 	}
 
 	/**

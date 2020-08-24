@@ -24,6 +24,8 @@ import static com.artemis.WorldConfiguration.ENTITY_MANAGER_IDX;
  */
 public class World {
 
+	MultiWorld multiWorld;
+
 	/** Manages all entities for the world. */
 	private final EntityManager em;
 
@@ -87,6 +89,12 @@ public class World {
 		alwaysDelayComponentRemoval = configuration.isAlwaysDelayComponentRemoval();
 
 		configuration.initialize(this, partition.injector, asm);
+
+		this.requestMultiWorldFocus();
+	}
+
+	public void requestMultiWorldFocus() {
+		this.multiWorld.changeWorld(this);
 	}
 
 	/**
