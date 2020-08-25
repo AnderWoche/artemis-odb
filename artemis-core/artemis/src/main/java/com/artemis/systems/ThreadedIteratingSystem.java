@@ -4,10 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.BaseEntitySystem;
 import com.artemis.utils.IntBag;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public abstract class ThreadedIteratingSystem extends BaseEntitySystem {
 
@@ -53,7 +50,7 @@ public abstract class ThreadedIteratingSystem extends BaseEntitySystem {
     @Override
     protected void processSystem() {
         IntBag actives = subscription.getEntities();
-        int[] ids = actives.getData();
+        final int[] ids = actives.getData();
 
         int size = actives.size();
         int iterationAmout = size / CPU_THREADS;
@@ -61,18 +58,21 @@ public abstract class ThreadedIteratingSystem extends BaseEntitySystem {
 //		System.out.println("ITERATE THREADED = " + size);
 
         for (int k = 0; k < CPU_THREADS; k++) {
-            int indexFrom = k * iterationAmout;
-            int indexTo;
+            final int indexFrom = k * iterationAmout;
+            final int indexTo;
             if ((k + 1) >= CPU_THREADS) {
                 indexTo = size;
             } else {
                 indexTo = (k + 1) * iterationAmout;
             }
-            Future<Boolean> process = executor.submit(()-> {
-                for(int i = indexFrom; i < indexTo; i++) {
-                    this.process(ids[i]);
+            Future<Boolean> process = executor.submit(new Callable<Boolean>() {
+                @Override
+                public Boolean call() throws Exception {
+                    for (int i = indexFrom; i < indexTo; i++) {
+                        ThreadedIteratingSystem.this.process(ids[i]);
+                    }
+                    return true;
                 }
-                return true;
             });
             this.runningTasks[k] = process;
         }
