@@ -30,6 +30,7 @@ public class ArtemisFieldResolver implements FieldResolver, UseInjectionCache {
 	public void initialize(World world) {
 		this.world = world;
 
+		// Normal ArtemisODB
 		for (BaseSystem es : world.getSystems()) {
 			Class<?> origin = es.getClass();
 			Class<?> clazz = origin;
@@ -37,6 +38,16 @@ public class ArtemisFieldResolver implements FieldResolver, UseInjectionCache {
 				systems.put(clazz, origin);
 			} while ((clazz = clazz.getSuperclass()) != Object.class);
 		}
+
+		// MultiWorld
+		for (BaseSystem es : world.getMultiWorld().getSystems()) {
+			Class<?> origin = es.getClass();
+			Class<?> clazz = origin;
+			do {
+				systems.put(clazz, origin);
+			} while ((clazz = clazz.getSuperclass()) != Object.class);
+		}
+
 	}
 
 	@Override
@@ -47,6 +58,10 @@ public class ArtemisFieldResolver implements FieldResolver, UseInjectionCache {
 			case MAPPER:
 				return getComponentMapper(field);
 			case SYSTEM:
+				BaseSystem baseSystem = world.getMultiWorld().getSystem((Class<BaseSystem>) systems.get(fieldType));
+				if(baseSystem != null) {
+					return baseSystem;
+				}
 				return world.getSystem((Class<BaseSystem>) systems.get(fieldType));
 			case WORLD:
 				return world;
