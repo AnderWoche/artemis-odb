@@ -24,6 +24,7 @@ public class MultiWorld {
     }
 
     public MultiWorld(MultiWorldConfiguration multiWorldConfiguration) {
+        if(multiWorldConfiguration == null) multiWorldConfiguration = new MultiWorldConfiguration();
         this.initSystems(multiWorldConfiguration.systems);
     }
 
