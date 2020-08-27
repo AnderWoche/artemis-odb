@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 public class MultiWorld {
 
+    private float delta;
+
     private World currentWorld;
 
     private final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
@@ -61,9 +63,17 @@ public class MultiWorld {
     }
 
     public void process() {
-        BaseSystem[] data = this.systems.getData();
-        for (int i = 0, s = this.systems.size(); i < s; i++) {
-            data[i].process();
+        if(this.currentWorld != null) {
+            BaseSystem[] data = this.systems.getData();
+            for (int i = 0, s = this.systems.size(); i < s; i++) {
+                BaseSystem baseSystems = data[i];
+                if(baseSystems.isEnabled()) {
+                    baseSystems.process();
+                }
+            }
+
+            this.currentWorld.setDelta(this.delta);
+            this.currentWorld.process();
         }
     }
 
@@ -118,4 +128,11 @@ public class MultiWorld {
         return currentWorld;
     }
 
+    public float getDelta() {
+        return delta;
+    }
+
+    public void setDelta(float delta) {
+        this.delta = delta;
+    }
 }
