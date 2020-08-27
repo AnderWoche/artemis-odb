@@ -63,7 +63,7 @@ public class MultiWorld {
         }
     }
 
-    public void process() {
+    void process() {
         if(this.currentWorld != null) {
             BaseSystem[] data = this.systems.getData();
             for (int i = 0, s = this.systems.size(); i < s; i++) {
@@ -72,9 +72,6 @@ public class MultiWorld {
                     baseSystems.process();
                 }
             }
-
-            this.currentWorld.setDelta(this.delta);
-            this.currentWorld.process();
         }
     }
 

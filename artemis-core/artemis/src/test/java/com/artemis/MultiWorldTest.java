@@ -42,7 +42,7 @@ public class MultiWorldTest {
         w2.process();
 
         // process World 1
-        w1.requestMultiWorldFocus();
+//        w1.requestMultiWorldFocus();
 
         multiWorld.process();
 
@@ -50,7 +50,7 @@ public class MultiWorldTest {
         assertEquals(w1.toString(), anComponent.name);
 
         // Process World 2
-        w2.requestMultiWorldFocus();
+//        w2.requestMultiWorldFocus();
 
         multiWorld.process();
 

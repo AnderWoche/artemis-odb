@@ -90,12 +90,12 @@ public class World {
 
 		configuration.initialize(this, partition.injector, asm);
 
-		this.requestMultiWorldFocus();
+//		this.requestMultiWorldFocus();
 	}
 
-	public void requestMultiWorldFocus() {
-		this.multiWorld.changeWorld(this);
-	}
+//	public void requestMultiWorldFocus() {
+//		this.multiWorld.changeWorld(this);
+//	}
 
 	/**
 	 * Inject dependencies on object.
@@ -390,6 +390,12 @@ public class World {
 	 * @see InvocationStrategy to control and extend how systems are invoked.
 	 */
 	public void process() {
+		if(this.multiWorld.getCurrentWorld() != this) {
+			this.multiWorld.changeWorld(this);
+		}
+
+		this.multiWorld.process();
+
 		invocationStrategy.process();
 
 		IntBag pendingPurge = batchProcessor.getPendingPurge();
