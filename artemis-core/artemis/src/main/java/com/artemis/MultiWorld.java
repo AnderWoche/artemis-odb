@@ -39,15 +39,16 @@ public class MultiWorld {
     }
 
 
-    protected <T extends BaseSystem> void registerMultiBaseSystem(T staticBaseSystem) {
-        this.injectObject(staticBaseSystem);
-        this.systems.add(staticBaseSystem);
-        this.systemsMap.put(staticBaseSystem.getClass(), staticBaseSystem);
-//        if (staticBaseSystem instanceof Resizable) {
-//            this.resizableSystemsArray.add((Resizable) staticBaseSystem);
+    protected <T extends BaseSystem> void registerMultiBaseSystem(T baseSystem) {
+        baseSystem.setMultiSystem();
+        this.injectObject(baseSystem);
+        this.systems.add(baseSystem);
+        this.systemsMap.put(baseSystem.getClass(), baseSystem);
+//        if (baseSystem instanceof Resizable) {
+//            this.resizableSystemsArray.add((Resizable) baseSystem);
 //        }
-//        if (staticBaseSystem instanceof InputProcessor) {
-//            SpaceExplorer.addInputProcessor(3, (InputProcessor) staticBaseSystem);
+//        if (baseSystem instanceof InputProcessor) {
+//            SpaceExplorer.addInputProcessor(3, (InputProcessor) baseSystem);
 //        }
     }
 

@@ -161,8 +161,11 @@ public abstract class BaseSystem {
         return isMultiSystem;
     }
 
-    void setMultiSystem(boolean multiSystem) {
-        isMultiSystem = multiSystem;
+    /**
+     * set the System to a MultiSystem
+     */
+    void setMultiSystem() {
+        this.isMultiSystem = true;
     }
 
 
