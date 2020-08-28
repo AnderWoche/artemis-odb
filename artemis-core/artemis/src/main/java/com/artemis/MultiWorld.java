@@ -28,15 +28,14 @@ public class MultiWorld {
     }
 
     public MultiWorld(MultiWorldConfiguration multiWorldConfiguration) {
-        if(multiWorldConfiguration == null) multiWorldConfiguration = new MultiWorldConfiguration();
+        if (multiWorldConfiguration == null) multiWorldConfiguration = new MultiWorldConfiguration();
         this.initSystems(multiWorldConfiguration.systems);
     }
 
     protected void initSystems(Bag<BaseSystem> systems) {
-        for (BaseSystem staticBaseSystem : systems) {
-            staticBaseSystem.setMultiWorld(this);
-            this.registerMultiBaseSystem(staticBaseSystem);
-            staticBaseSystem.initialize();
+        for (BaseSystem baseSystem : systems) {
+            baseSystem.setMultiWorld(this);
+            this.registerMultiBaseSystem(baseSystem);
         }
     }
 
@@ -63,17 +62,23 @@ public class MultiWorld {
         for (MultiEntitySubscription entitySubscription : this.multiEntitySubscriptions) {
             entitySubscription.changeWorld(world);
         }
-        for(Object o : this.autoInjectObjects) {
+        for (Object o : this.autoInjectObjects) {
             world.inject(o);
+        }
+        for (BaseSystem baseSystem : systems) {
+            if(!baseSystem.isInitialized) {
+                baseSystem.initialize();
+                baseSystem.isInitialized = true;
+            }
         }
     }
 
     void process() {
-        if(this.currentWorld != null) {
+        if (this.currentWorld != null) {
             BaseSystem[] data = this.systems.getData();
             for (int i = 0, s = this.systems.size(); i < s; i++) {
                 BaseSystem baseSystems = data[i];
-                if(baseSystems.isEnabled()) {
+                if (baseSystems.isEnabled()) {
                     baseSystems.process();
                 }
             }

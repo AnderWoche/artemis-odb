@@ -32,6 +32,9 @@ public abstract class BaseSystem {
     @SkipWire
     private boolean isEnabled = true;
 
+    @SkipWire
+    boolean isInitialized = false;
+
     public BaseSystem() {
     }
 
@@ -167,7 +170,6 @@ public abstract class BaseSystem {
     void setMultiSystem() {
         this.isMultiSystem = true;
     }
-
 
     /**
      * see {@link World#dispose()}
