@@ -11,12 +11,14 @@ public class MultiWorld {
 
     private float delta;
 
-    private World currentWorld;
+    World currentWorld;
 
     private final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
     private final Bag<BaseSystem> systems = new Bag<>(BaseSystem.class);
 
     private final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<>(MultiEntitySubscription.class);
+
+    private final Bag<Object> autoInjectObjects = new Bag<>(Object.class);
 
 //    private final Bag<Resizable> resizableSystemsArray = new Bag<>();
 
@@ -60,6 +62,9 @@ public class MultiWorld {
         }
         for (MultiEntitySubscription entitySubscription : this.multiEntitySubscriptions) {
             entitySubscription.changeWorld(world);
+        }
+        for(Object o : this.autoInjectObjects) {
+            world.inject(o);
         }
     }
 
@@ -133,4 +138,12 @@ public class MultiWorld {
     public void setDelta(float delta) {
         this.delta = delta;
     }
+
+    /**
+     * @param object the object that gets injected every world change.
+     */
+    public void addAutoObjectInject(Object object) {
+        this.autoInjectObjects.add(object);
+    }
+
 }

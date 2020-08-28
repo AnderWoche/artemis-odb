@@ -390,7 +390,7 @@ public class World {
 	 * @see InvocationStrategy to control and extend how systems are invoked.
 	 */
 	public void process() {
-		if(this.multiWorld.getCurrentWorld() != this) {
+		if(this.multiWorld.currentWorld != this) {
 			this.multiWorld.changeWorld(this);
 		}
 

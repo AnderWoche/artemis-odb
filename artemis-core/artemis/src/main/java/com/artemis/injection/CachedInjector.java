@@ -76,9 +76,7 @@ public final class CachedInjector implements Injector {
 			} else {
 				injectAnnotatedFields(target, cachedClass);
 			}
-		} catch (RuntimeException e ) {
-			throw new MundaneWireException("Error while wiring " + target.getClass().getName(), e);
-		} catch (ReflectionException e) {
+		} catch (RuntimeException | ReflectionException e ) {
 			throw new MundaneWireException("Error while wiring " + target.getClass().getName(), e);
 		}
 	}
