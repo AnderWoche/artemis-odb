@@ -77,7 +77,7 @@ public final class CachedInjector implements Injector {
 				injectAnnotatedFields(target, cachedClass);
 			}
 		} catch (RuntimeException | ReflectionException e ) {
-			throw new MundaneWireException("Error while wiring " + target.getClass().getName(), e);
+			throw new MundaneWireException("Error while wiring " + target.getClass().getName() + " maybe a public constructor is missing ", e);
 		}
 	}
 
