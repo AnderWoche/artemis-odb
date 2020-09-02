@@ -37,6 +37,9 @@ public class World {
 
 		/** Contains all systems unordered. */
 	final Bag<BaseSystem> systemsBag;
+
+	final HashMap<String, BaseSystem> systemHashMap;
+
 	/** Manages all aspect based entity subscriptions for the world. */
 	final AspectSubscriptionManager asm;
 
@@ -90,12 +93,12 @@ public class World {
 
 		configuration.initialize(this, partition.injector, asm);
 
-//		this.requestMultiWorldFocus();
-	}
+		this.systemHashMap = new HashMap<String, BaseSystem>();
+		for(BaseSystem baseSystem : this.systemsBag) {
+			this.systemHashMap.put(baseSystem.getSystemName(), baseSystem);
+		}
 
-//	public void requestMultiWorldFocus() {
-//		this.multiWorld.changeWorld(this);
-//	}
+	}
 
 	/**
 	 * Inject dependencies on object.
@@ -364,6 +367,14 @@ public class World {
 		return systemsBag;
 	}
 
+	public HashMap<String, BaseSystem> getSystemHashMap() {
+		return systemHashMap;
+	}
+
+	public BaseSystem getSystemByName(String name) {
+		return this.systemHashMap.get(name);
+	}
+
 	/**
 	 * Retrieve a system for specified system type.
 	 * @param <T>
@@ -404,6 +415,19 @@ public class World {
 			em.clean(pendingPurge);
 
 			batchProcessor.purgeComponents();
+		}
+	}
+
+	public void resize(int width, int height) {
+		for(BaseSystem baseSystem : this.systemsBag) {
+			if(baseSystem instanceof ResizableSystem) {
+				((ResizableSystem) baseSystem).resize(width, height);
+			}
+		}
+		for(BaseSystem baseSystem : this.multiWorld.getSystems()) {
+			if(baseSystem instanceof ResizableSystem) {
+				((ResizableSystem) baseSystem).resize(width, height);
+			}
 		}
 	}
 

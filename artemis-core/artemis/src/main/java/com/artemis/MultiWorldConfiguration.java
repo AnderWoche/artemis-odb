@@ -6,8 +6,9 @@ public class MultiWorldConfiguration {
 	
 	final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
 
-	public void with(BaseSystem baseSystem) {
+	public MultiWorldConfiguration with(BaseSystem baseSystem) {
 		this.systems.add(baseSystem);
+		return this;
 	}
 
 	public Bag<BaseSystem> getSystems() {

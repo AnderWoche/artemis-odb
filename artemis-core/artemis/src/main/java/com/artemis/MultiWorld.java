@@ -1,24 +1,29 @@
 package com.artemis;
 
 import com.artemis.utils.Bag;
+import com.artemis.utils.NettyByteBufUtil;
 import com.artemis.utils.reflect.ClassReflection;
 import com.artemis.utils.reflect.Field;
 import com.artemis.utils.reflect.ReflectionException;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandler;
 
 import java.util.HashMap;
 
-public class MultiWorld {
+public class MultiWorld implements ChannelInboundHandler {
 
-    private float delta;
+    private ChannelHandlerContext ctx;
 
     World currentWorld;
 
-    private final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
-    private final Bag<BaseSystem> systems = new Bag<>(BaseSystem.class);
+    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
+    final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
+    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<String, BaseSystem>();
 
-    private final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<>(MultiEntitySubscription.class);
+    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<MultiEntitySubscription>(MultiEntitySubscription.class);
 
-    private final Bag<Object> autoInjectObjects = new Bag<>(Object.class);
+    final Bag<Object> autoInjectObjects = new Bag<Object>(Object.class);
 
 //    private final Bag<Resizable> resizableSystemsArray = new Bag<>();
 
@@ -45,6 +50,7 @@ public class MultiWorld {
         this.injectObject(baseSystem);
         this.systems.add(baseSystem);
         this.systemsMap.put(baseSystem.getClass(), baseSystem);
+        this.systemNameHashMap.put(baseSystem.getSystemName(), baseSystem);
 //        if (baseSystem instanceof Resizable) {
 //            this.resizableSystemsArray.add((Resizable) baseSystem);
 //        }
@@ -55,8 +61,25 @@ public class MultiWorld {
 
     public synchronized void changeWorld(World world) {
         this.currentWorld = world;
+
+        // Check for System overlap
+        for (BaseSystem multiBaseSystem : world.getSystems()) {
+            for (BaseSystem singleBaseSystem : this.systems) {
+                if (multiBaseSystem.getClass().equals(singleBaseSystem.getClass())) {
+                    throw new RuntimeException("you cant run a system on a MultiWorld and on a World. <" + multiBaseSystem.getClass() + ">");
+                }
+            }
+        }
+
+        // inject World systems
+        for(BaseSystem baseSystem : world.getSystems()) {
+            baseSystem.setChannelHandlerContext(this.ctx);
+        }
+
+        // inject MultiWorld Systems
         for (BaseSystem baseSystem : this.systems) {
             baseSystem.setWorld(world);
+            baseSystem.setChannelHandlerContext(this.ctx);
             world.inject(baseSystem);
         }
         for (MultiEntitySubscription entitySubscription : this.multiEntitySubscriptions) {
@@ -65,8 +88,10 @@ public class MultiWorld {
         for (Object o : this.autoInjectObjects) {
             world.inject(o);
         }
+
+        //init system if it is not initialized
         for (BaseSystem baseSystem : systems) {
-            if(!baseSystem.isInitialized) {
+            if (!baseSystem.isInitialized) {
                 baseSystem.initialize();
                 baseSystem.isInitialized = true;
             }
@@ -136,14 +161,6 @@ public class MultiWorld {
         return currentWorld;
     }
 
-    public float getDelta() {
-        return delta;
-    }
-
-    public void setDelta(float delta) {
-        this.delta = delta;
-    }
-
     /**
      * @param object the object that gets injected every world change.
      */
@@ -151,4 +168,68 @@ public class MultiWorld {
         this.autoInjectObjects.add(object);
     }
 
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+        for(BaseSystem baseSystem : this.getSystems()) {
+            baseSystem.setChannelHandlerContext(this.ctx);
+        }
+        for(BaseSystem baseSystem : this.currentWorld.getSystems()) {
+            baseSystem.setChannelHandlerContext(this.ctx);
+        }
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) {
+
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.fireExceptionCaught(cause);
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) {
+        ctx.fireChannelRegistered();
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) {
+        ctx.fireChannelUnregistered();
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        ctx.fireChannelActive();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        ctx.fireChannelActive();
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ByteBuf byteBuf = (ByteBuf) msg;
+        String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
+        BaseSystem networkedSystem = this.systemNameHashMap.get(systemName);
+
+        networkedSystem.read(byteBuf);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.fireChannelReadComplete();
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
+        ctx.fireUserEventTriggered(evt);
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) {
+        ctx.fireChannelWritabilityChanged();
+    }
 }

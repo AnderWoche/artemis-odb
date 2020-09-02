@@ -6,11 +6,15 @@ import static org.junit.Assert.assertNotEquals;
 import com.artemis.annotations.All;
 import com.artemis.annotations.SkipWire;
 import com.artemis.systems.IteratingSystem;
+import io.netty.buffer.ByteBuf;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.artemis.component.ComponentX;
 import com.artemis.component.ComponentY;
 import com.artemis.systems.VoidEntitySystem;
+
+import java.util.concurrent.ExecutionException;
 
 public class MultiWorldTest {
     @All(WorldTest.AnComponent.class)
@@ -22,6 +26,16 @@ public class MultiWorldTest {
         protected void process(int entityId) {
             WorldTest.AnComponent anComponent = mapper.get(entityId);
             anComponent.name = super.world.toString();
+        }
+
+        @Override
+        protected void read(ByteBuf byteBuf) {
+
+        }
+
+        @Override
+        public String getSystemName() {
+            return "anMultisystem";
         }
     }
 
@@ -56,6 +70,86 @@ public class MultiWorldTest {
 
         anComponent = w2.getMapper(WorldTest.AnComponent.class).get(0);
         assertEquals(w2.toString(), anComponent.name);
+
+    }
+
+    @Test
+    public void system_overlap_test() {
+        MultiWorldConfiguration worldConfiguration = new MultiWorldConfiguration();
+        worldConfiguration.with(new MultiSystem());
+
+        MultiWorld multiWorld = new MultiWorld(worldConfiguration);
+
+        WorldConfigurationBuilder builder = new WorldConfigurationBuilder();
+        builder.with(new MultiSystem());
+        builder.setMultiWorld(multiWorld);
+
+        World w = new World(builder.build());
+
+        Exception exception = null;
+        try {
+            w.process();
+            Assert.fail();
+        } catch (RuntimeException e) {
+            exception = e;
+        }
+
+        Assert.assertNotNull(exception);
+    }
+
+    @Test
+    public void system_overlap_on_more_worlds_test() {
+        MultiWorld multiWorld = new MultiWorld();
+
+        WorldConfigurationBuilder builder = new WorldConfigurationBuilder();
+
+        builder.with(new MultiSystem());
+        builder.setMultiWorld(multiWorld);
+        World w = new World(builder.build());
+
+        builder.with(new MultiSystem());
+        builder.setMultiWorld(multiWorld);
+        World w2 = new World(builder.build());
+
+        try {
+            w.process();
+        } catch (RuntimeException e) {
+            Assert.fail();
+        }
+
+        try {
+            w2.process();
+        } catch (RuntimeException e) {
+            Assert.fail();
+        }
+
+        try {
+            for (int i = 0; i < 20; i++) {
+                w.process();
+            }
+        } catch (RuntimeException e) {
+            Assert.fail();
+        }
+
+        try {
+            for (int i = 0; i < 20; i++) {
+                w2.process();
+            }
+        } catch (RuntimeException e) {
+            Assert.fail();
+        }
+
+    }
+
+    @Test
+    public void world_system_netty_test() {
+        MultiWorld multiWorld1 = new MultiWorld(new MultiWorldConfiguration().with(new MultiSystem()));
+        World world1 = new World(new WorldConfigurationBuilder().setMultiWorld(multiWorld1).build());
+
+        MultiWorld multiWorld2 = new MultiWorld(new MultiWorldConfiguration().with(new MultiSystem()));
+        World world2 = new World(new WorldConfigurationBuilder().setMultiWorld(multiWorld2).build());
+
+        // TEST Missing COMMING SOON
 
     }
 

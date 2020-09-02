@@ -108,9 +108,9 @@ public class WorldConfigurationBuilder {
     private void reset() {
         this.multiWorld = null;
         invocationStrategy = null;
-        systems = new Bag<>();
-        fieldResolvers = new Bag<>();
-        plugins = new Bag<>();
+        systems = new Bag<ConfigurationElement<? extends BaseSystem>>();
+        fieldResolvers = new Bag<ConfigurationElement<? extends FieldResolver>>();
+        plugins = new Bag<ConfigurationElement<? extends ArtemisPlugin>>();
         alwaysDelayComponentRemoval = false;
     }
 
