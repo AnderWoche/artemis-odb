@@ -96,7 +96,7 @@ public abstract class BaseSystem {
      */
     @SuppressWarnings("static-method")
     protected boolean checkProcessing() {
-        return true;
+        return this.isInitialized;
     }
 
     /**
