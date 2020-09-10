@@ -405,8 +405,6 @@ public class World {
 			this.multiWorld.changeWorld(this);
 		}
 
-		this.multiWorld.process();
-
 		invocationStrategy.process();
 
 		IntBag pendingPurge = batchProcessor.getPendingPurge();
@@ -416,6 +414,8 @@ public class World {
 
 			batchProcessor.purgeComponents();
 		}
+
+		this.multiWorld.process();
 	}
 
 	public void resize(int width, int height) {
