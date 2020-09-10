@@ -50,7 +50,7 @@ public class MultiWorld implements ChannelInboundHandler {
         this.injectObject(baseSystem);
         this.systems.add(baseSystem);
         this.systemsMap.put(baseSystem.getClass(), baseSystem);
-        this.systemNameHashMap.put(baseSystem.getSystemName(), baseSystem);
+        this.systemNameHashMap.put(baseSystem.getSystemIdentifier(), baseSystem);
 //        if (baseSystem instanceof Resizable) {
 //            this.resizableSystemsArray.add((Resizable) baseSystem);
 //        }

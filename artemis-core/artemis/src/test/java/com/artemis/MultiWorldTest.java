@@ -34,7 +34,7 @@ public class MultiWorldTest {
         }
 
         @Override
-        public String getSystemName() {
+        public String getSystemIdentifier() {
             return "anMultisystem";
         }
     }

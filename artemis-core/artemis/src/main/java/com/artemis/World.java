@@ -95,7 +95,7 @@ public class World {
 
 		this.systemHashMap = new HashMap<String, BaseSystem>();
 		for(BaseSystem baseSystem : this.systemsBag) {
-			this.systemHashMap.put(baseSystem.getSystemName(), baseSystem);
+			this.systemHashMap.put(baseSystem.getSystemIdentifier(), baseSystem);
 		}
 
 	}

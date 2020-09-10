@@ -199,7 +199,7 @@ public abstract class BaseSystem {
 		ByteBuf buffer = ctx.alloc().buffer();
 
 		// write System Name
-		NettyByteBufUtil.writeUTF16String(buffer, this.getSystemName());
+		NettyByteBufUtil.writeUTF16String(buffer, this.getSystemIdentifier());
 
 		// write Massage
 		buffer.writeBytes(byteBuf);
@@ -207,7 +207,7 @@ public abstract class BaseSystem {
 		ctx.channel().writeAndFlush(buffer);
     }
 
-    public String getSystemName() {
+    public String getSystemIdentifier() {
         return this.getClass().getSimpleName();
     }
 
