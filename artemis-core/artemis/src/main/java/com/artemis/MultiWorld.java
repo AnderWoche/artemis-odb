@@ -174,8 +174,10 @@ public class MultiWorld implements ChannelInboundHandler {
         for(BaseSystem baseSystem : this.getSystems()) {
             baseSystem.setChannelHandlerContext(this.ctx);
         }
-        for(BaseSystem baseSystem : this.currentWorld.getSystems()) {
-            baseSystem.setChannelHandlerContext(this.ctx);
+        if(this.currentWorld != null) {
+            for(BaseSystem baseSystem : this.currentWorld.getSystems()) {
+                baseSystem.setChannelHandlerContext(this.ctx);
+            }
         }
     }
 
