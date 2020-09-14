@@ -403,6 +403,7 @@ public class World {
 	public void process() {
 		if(this.multiWorld.currentWorld != this) {
 			this.multiWorld.changeWorld(this);
+			this.changeToActive();
 		}
 
 		invocationStrategy.process();
@@ -429,6 +430,13 @@ public class World {
 				((ResizableSystem) baseSystem).resize(width, height);
 			}
 		}
+	}
+
+	/**
+	 * This Method get Called if this world is now The currentProcessing World in the MultiWorld
+	 */
+	protected void changeToActive() {
+
 	}
 
 	/**

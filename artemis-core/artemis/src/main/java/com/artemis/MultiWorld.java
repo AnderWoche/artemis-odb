@@ -17,15 +17,13 @@ public class MultiWorld implements ChannelInboundHandler {
 
     World currentWorld;
 
-    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
-    final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
-    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<String, BaseSystem>();
+    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
+    final Bag<BaseSystem> systems = new Bag<>(BaseSystem.class);
+    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<>();
 
-    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<MultiEntitySubscription>(MultiEntitySubscription.class);
+    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<>(MultiEntitySubscription.class);
 
-    final Bag<Object> autoInjectObjects = new Bag<Object>(Object.class);
-
-//    private final Bag<Resizable> resizableSystemsArray = new Bag<>();
+    final Bag<Object> autoInjectObjects = new Bag<>(Object.class);
 
 
     public MultiWorld() {
