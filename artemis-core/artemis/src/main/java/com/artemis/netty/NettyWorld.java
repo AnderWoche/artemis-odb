@@ -1,11 +1,17 @@
 package com.artemis.netty;
 
 import com.artemis.World;
+import com.artemis.WorldConfiguration;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 
 public class NettyWorld extends World implements ChannelInboundHandler {
 
+    protected NettyWorldType worldType;
+
+    public NettyWorld(WorldConfiguration configuration) {
+        super(configuration);
+    }
 
     @Override
     public void handlerAdded(ChannelHandlerContext channelHandlerContext) {
@@ -61,4 +67,5 @@ public class NettyWorld extends World implements ChannelInboundHandler {
     public void channelWritabilityChanged(ChannelHandlerContext ctx) {
         ctx.fireChannelWritabilityChanged();
     }
+
 }

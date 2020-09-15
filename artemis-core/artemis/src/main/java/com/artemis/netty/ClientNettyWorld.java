@@ -2,8 +2,14 @@ package com.artemis.netty;
 
 import com.artemis.Archetype;
 import com.artemis.Entity;
+import com.artemis.WorldConfiguration;
 
 public class ClientNettyWorld extends NettyWorld {
+
+    public ClientNettyWorld(WorldConfiguration configuration) {
+        super(configuration);
+        super.worldType = NettyWorldType.Client;
+    }
 
     @Override
     public int create() {
