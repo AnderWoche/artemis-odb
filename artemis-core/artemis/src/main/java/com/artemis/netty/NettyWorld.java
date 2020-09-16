@@ -68,4 +68,7 @@ public class NettyWorld extends World implements ChannelInboundHandler {
         ctx.fireChannelWritabilityChanged();
     }
 
+    public NettyWorldType getWorldType() {
+        return worldType;
+    }
 }

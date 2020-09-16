@@ -1,6 +1,7 @@
 package com.artemis;
 
 import com.artemis.utils.Bag;
+import com.artemis.utils.EntityDescription;
 import com.artemis.utils.NettyByteBufUtil;
 import com.artemis.utils.reflect.ClassReflection;
 import com.artemis.utils.reflect.Field;
@@ -17,13 +18,18 @@ public class MultiWorld implements ChannelInboundHandler {
 
     World currentWorld;
 
-    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
-    final Bag<BaseSystem> systems = new Bag<>(BaseSystem.class);
-    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<>();
+    /**
+     * EntityDescriptions are loaded central for no duplication.
+     */
+    HashMap<String, EntityDescription> loadedEntityDescriptions = new HashMap<String, EntityDescription>();
 
-    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<>(MultiEntitySubscription.class);
+    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
+    final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
+    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<String, BaseSystem>();
 
-    final Bag<Object> autoInjectObjects = new Bag<>(Object.class);
+    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<MultiEntitySubscription>(MultiEntitySubscription.class);
+
+    final Bag<Object> autoInjectObjects = new Bag<Object>(Object.class);
 
 
     public MultiWorld() {
@@ -145,6 +151,9 @@ public class MultiWorld implements ChannelInboundHandler {
         this.multiEntitySubscriptions.add(staticEntitySubscription);
     }
 
+    public void loadEntityDescription(String entityName, EntityDescription description) {
+        this.loadedEntityDescriptions.put(entityName, description);
+    }
 
     public Bag<BaseSystem> getSystems() {
         return systems;

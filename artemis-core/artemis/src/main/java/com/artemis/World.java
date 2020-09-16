@@ -29,6 +29,8 @@ public class World {
 	/** Manages all entities for the world. */
 	private final EntityManager em;
 
+	private final EntitySpawnSystem entitySpawnSystem;
+
 	/** Manages all component-entity associations for the world. */
 	private final ComponentManager cm;
 
@@ -92,6 +94,10 @@ public class World {
 		alwaysDelayComponentRemoval = configuration.isAlwaysDelayComponentRemoval();
 
 		configuration.initialize(this, partition.injector, asm);
+
+		this.entitySpawnSystem = new EntitySpawnSystem();
+		this.entitySpawnSystem.setWorld(this);
+		this.entitySpawnSystem.setMultiWorld(this.multiWorld);
 
 		this.systemHashMap = new HashMap<String, BaseSystem>();
 		for(BaseSystem baseSystem : this.systemsBag) {
@@ -214,6 +220,14 @@ public class World {
 	 */
 	public ComponentManager getComponentManager() {
 		return cm;
+	}
+
+	public EntitySpawnSystem getEntitySpawnSystem() {
+		return entitySpawnSystem;
+	}
+
+	public Entity spawnEntity(String entityName) {
+		return this.entitySpawnSystem.spawnEntity(entityName);
 	}
 
 	/**
