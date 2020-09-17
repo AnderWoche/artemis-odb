@@ -5,12 +5,11 @@ import com.artemis.Entity;
 import com.artemis.EntityEdit;
 import com.artemis.World;
 import com.artemis.annotations.ClientOnly;
-import com.artemis.netty.NettyWorld;
+import com.artemis.NettyWorld;
 import com.artemis.netty.NettyWorldType;
 import com.artemis.utils.reflect.ClassReflection;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

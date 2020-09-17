@@ -32,9 +32,12 @@ public abstract class BaseEntitySystem extends BaseSystem
         if (aspect == null) {
             aspect = new SystemMetadata(getClass()).getAspect();
             if (aspect == null) {
-                String error = "Aspect was null and no aspect annotations set on system (@All); to use systems which " +
-                        "do not subscribe to entities, extend BaseSystem directly.";
-                throw new NullPointerException(error);
+                aspect = new SystemMetadata((Class<? extends BaseSystem>) getClass().getSuperclass()).getAspect();
+                if(aspect == null) {
+                    String error = "Aspect was null and no aspect annotations set on system (@All); to use systems which " +
+                            "do not subscribe to entities, extend BaseSystem directly.";
+                    throw new NullPointerException(error);
+                }
             }
         }
 

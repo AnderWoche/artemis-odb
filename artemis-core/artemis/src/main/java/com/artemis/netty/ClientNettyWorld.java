@@ -2,6 +2,7 @@ package com.artemis.netty;
 
 import com.artemis.Archetype;
 import com.artemis.Entity;
+import com.artemis.NettyWorld;
 import com.artemis.WorldConfiguration;
 
 public class ClientNettyWorld extends NettyWorld {

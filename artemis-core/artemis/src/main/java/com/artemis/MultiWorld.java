@@ -25,7 +25,6 @@ public class MultiWorld implements ChannelInboundHandler {
 
     final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
     final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
-    final HashMap<String, BaseSystem> systemNameHashMap = new HashMap<String, BaseSystem>();
 
     final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<MultiEntitySubscription>(MultiEntitySubscription.class);
 
@@ -54,13 +53,6 @@ public class MultiWorld implements ChannelInboundHandler {
         this.injectObject(baseSystem);
         this.systems.add(baseSystem);
         this.systemsMap.put(baseSystem.getClass(), baseSystem);
-        this.systemNameHashMap.put(baseSystem.getSystemIdentifier(), baseSystem);
-//        if (baseSystem instanceof Resizable) {
-//            this.resizableSystemsArray.add((Resizable) baseSystem);
-//        }
-//        if (baseSystem instanceof InputProcessor) {
-//            SpaceExplorer.addInputProcessor(3, (InputProcessor) baseSystem);
-//        }
     }
 
     public synchronized void changeWorld(World world) {
@@ -222,7 +214,7 @@ public class MultiWorld implements ChannelInboundHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf byteBuf = (ByteBuf) msg;
         String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
-        BaseSystem networkedSystem = this.systemNameHashMap.get(systemName);
+        BaseSystem networkedSystem = this.currentWorld.systemNameHashMap.get(systemName);
 
         networkedSystem.read(byteBuf);
     }

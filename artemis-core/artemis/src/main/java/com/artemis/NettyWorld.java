@@ -1,11 +1,18 @@
-package com.artemis.netty;
+package com.artemis;
 
+import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
+import com.artemis.netty.NettyWorldType;
+import com.artemis.utils.NettyByteBufUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 
-public class NettyWorld extends World implements ChannelInboundHandler {
+@Sharable
+public abstract class NettyWorld extends World implements ChannelInboundHandler {
 
     protected NettyWorldType worldType;
 
@@ -20,6 +27,14 @@ public class NettyWorld extends World implements ChannelInboundHandler {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext channelHandlerContext) {
+
+    }
+
+    /**
+     * Override to implement
+     * @param  byteBuf the massage
+     */
+    protected void read(ByteBuf byteBuf) {
 
     }
 
@@ -49,8 +64,18 @@ public class NettyWorld extends World implements ChannelInboundHandler {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext channelHandlerContext, Object o) {
+    public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg) {
+        ByteBuf byteBuf = (ByteBuf) msg;
+        String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
 
+        if(systemName.equals(this.getNettyWorldName())) {
+            this.read(byteBuf);
+            return;
+        }
+
+        BaseSystem networkedSystem = super.systemNameHashMap.get(systemName);
+
+        networkedSystem.read(byteBuf);
     }
 
     @Override
@@ -70,5 +95,9 @@ public class NettyWorld extends World implements ChannelInboundHandler {
 
     public NettyWorldType getWorldType() {
         return worldType;
+    }
+
+    public String getNettyWorldName() {
+        return "NettyWorld";
     }
 }
