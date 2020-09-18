@@ -42,17 +42,19 @@ public class ArtemisODBServer {
         this.serverThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                long delta = System.currentTimeMillis();
+                long processBegin = System.currentTimeMillis() - 1;
+                long delta;
                 while (true) {
-                    delta = System.currentTimeMillis() - delta;
+                    delta = System.currentTimeMillis() - processBegin;
+                    processBegin = System.currentTimeMillis();
                     try {
-                        Thread.sleep(1/120);
+                        long wait = 1000 / 120;
+                        Thread.sleep(wait);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    serverNettyWorld.setDelta(1F / 30F);
+                    serverNettyWorld.setDelta(delta);
                     serverNettyWorld.process();
-                    delta = System.currentTimeMillis();
                 }
             }
         });

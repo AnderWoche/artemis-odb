@@ -34,7 +34,7 @@ public abstract class NettyWorld extends World implements ChannelInboundHandler 
      * Override to implement
      * @param  byteBuf the massage
      */
-    protected void read(ByteBuf byteBuf) {
+    protected void read(ChannelHandlerContext ctx, ByteBuf byteBuf) {
 
     }
 
@@ -64,18 +64,18 @@ public abstract class NettyWorld extends World implements ChannelInboundHandler 
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf byteBuf = (ByteBuf) msg;
         String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
 
         if(systemName.equals(this.getNettyWorldName())) {
-            this.read(byteBuf);
+            this.read(ctx, byteBuf);
             return;
         }
 
         BaseSystem networkedSystem = super.systemNameHashMap.get(systemName);
 
-        networkedSystem.read(byteBuf);
+        networkedSystem.read(ctx, byteBuf);
     }
 
     @Override

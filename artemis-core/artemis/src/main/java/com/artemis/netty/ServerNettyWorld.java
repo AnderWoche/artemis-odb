@@ -27,16 +27,12 @@ public class ServerNettyWorld extends NettyWorld {
         this.idSystem.unregisterChannel(ctx);
     }
 
-    /**
-     * Override to implement
-     *
-     * @param byteBuf the massage
-     */
-    protected void read(ByteBuf byteBuf) {
-
+    @Override
+    protected void read(ChannelHandlerContext ctx, ByteBuf byteBuf) {
+        super.read(ctx, byteBuf);
     }
 
-//    protected void write(ByteBuf byteBuf) {
+    //    protected void write(ByteBuf byteBuf) {
 //        // get Ctx and channel and other things from GLOBAL CALL
 //
 //        ByteBuf buffer = ctx.alloc().buffer();

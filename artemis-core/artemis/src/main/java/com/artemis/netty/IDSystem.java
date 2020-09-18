@@ -2,27 +2,26 @@ package com.artemis.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class IDSystem {
 
-    private Queue<Integer> freeClientIds;
-    private AtomicInteger clientID = new AtomicInteger(0);
-    private HashMap<Integer, ChannelHandlerContext> registeredChannels;
-    private HashMap<ChannelHandlerContext, Integer> registeredChannelsReverted;
+    private final BlockingQueue<Integer> freeClientIds;
+    private final AtomicInteger clientID = new AtomicInteger(0);
+    private final Map<Integer, ChannelHandlerContext> registeredChannels;
+    private final Map<ChannelHandlerContext, Integer> registeredChannelsReverted;
 
     public IDSystem() {
-        this.freeClientIds = (Queue<Integer>) Collections.synchronizedList(new LinkedList<Integer>());
+        this.freeClientIds = new ArrayBlockingQueue<>(128);
 
-        HashMap<Integer, ChannelHandlerContext> map = new HashMap<Integer, ChannelHandlerContext>();
-        this.registeredChannels = (HashMap<Integer, ChannelHandlerContext>) Collections.synchronizedMap(map);
+        HashMap<Integer, ChannelHandlerContext> map = new HashMap<>();
+        this.registeredChannels = Collections.synchronizedMap(map);
 
-        HashMap<ChannelHandlerContext, Integer> map2 = new HashMap<ChannelHandlerContext, Integer>();
-        this.registeredChannelsReverted = (HashMap<ChannelHandlerContext, Integer>) Collections.synchronizedMap(map2);
+        HashMap<ChannelHandlerContext, Integer> map2 = new HashMap<>();
+        this.registeredChannelsReverted = Collections.synchronizedMap(map2);
     }
 
     private int obtainID() {
@@ -33,6 +32,7 @@ class IDSystem {
     }
 
     public int registerChannel(ChannelHandlerContext ctx) {
+        assert ctx != null;
         int id = this.obtainID();
         this.registeredChannels.put(id, ctx);
         this.registeredChannelsReverted.put(ctx, id);

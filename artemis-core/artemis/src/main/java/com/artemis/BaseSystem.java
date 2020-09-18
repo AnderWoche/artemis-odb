@@ -189,7 +189,7 @@ public abstract class BaseSystem {
      * Override to implement
      * @param  byteBuf the massage
      */
-    protected void read(ByteBuf byteBuf) {
+    public void read(ChannelHandlerContext ctx, ByteBuf byteBuf) {
 
     }
 

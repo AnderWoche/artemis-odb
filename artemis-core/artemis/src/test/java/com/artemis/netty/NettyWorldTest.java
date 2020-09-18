@@ -81,8 +81,8 @@ public class NettyWorldTest {
             channelFutureClient.sync();
         }
 
-        while (true)
-            Thread.sleep(4000);
+//        while (true)
+//            Thread.sleep(4000);
     }
 
 }

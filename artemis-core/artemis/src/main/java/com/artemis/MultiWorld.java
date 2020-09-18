@@ -216,7 +216,7 @@ public class MultiWorld implements ChannelInboundHandler {
         String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
         BaseSystem networkedSystem = this.currentWorld.systemNameHashMap.get(systemName);
 
-        networkedSystem.read(byteBuf);
+        networkedSystem.read(ctx, byteBuf);
     }
 
     @Override

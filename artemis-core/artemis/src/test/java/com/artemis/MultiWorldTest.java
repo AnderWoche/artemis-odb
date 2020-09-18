@@ -29,11 +29,6 @@ public class MultiWorldTest {
         }
 
         @Override
-        protected void read(ByteBuf byteBuf) {
-
-        }
-
-        @Override
         public String getSystemIdentifier() {
             return "anMultisystem";
         }
