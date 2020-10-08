@@ -32,12 +32,9 @@ public abstract class BaseEntitySystem extends BaseSystem
         if (aspect == null) {
             aspect = new SystemMetadata(getClass()).getAspect();
             if (aspect == null) {
-                aspect = new SystemMetadata((Class<? extends BaseSystem>) getClass().getSuperclass()).getAspect();
-                if(aspect == null) {
-                    String error = "Aspect was null and no aspect annotations set on system (@All); to use systems which " +
-                            "do not subscribe to entities, extend BaseSystem directly.";
-                    throw new NullPointerException(error);
-                }
+                String error = "Aspect was null and no aspect annotations set on system (@All); to use systems which " +
+                        "do not subscribe to entities, extend BaseSystem directly.";
+                throw new NullPointerException(error);
             }
         }
 
@@ -80,10 +77,10 @@ public abstract class BaseEntitySystem extends BaseSystem
 
     /**
      * Called if entity has come into scope for this system, e.g created or a component was added to it.
-     *
+     * <p>
      * Triggers right after any system finishes processing. Adding and immediately removing a component
      * does not count as a permanently change and will prevent this method from being called.
-     *
+     * <p>
      * Not triggered for entities that have been destroyed immediately after being created (within a system).
      *
      * @param entityId the entity that was added to this system
@@ -122,7 +119,7 @@ public abstract class BaseEntitySystem extends BaseSystem
      * for a small performance hit.
      * <p>
      * {@link ComponentMapper#has(int)} always returns {@code false}, even for DelayedComponentRemoval components.
-     *
+     * <p>
      * Can trigger for entities that have been destroyed immediately after being created (within a system).
      *
      * @param entityId the entity that was removed from this system
