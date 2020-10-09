@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotEquals;
 import com.artemis.annotations.All;
 import com.artemis.annotations.SkipWire;
 import com.artemis.systems.IteratingSystem;
-import io.netty.buffer.ByteBuf;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,11 +25,6 @@ public class MultiWorldTest {
         protected void process(int entityId) {
             WorldTest.AnComponent anComponent = mapper.get(entityId);
             anComponent.name = super.world.toString();
-        }
-
-        @Override
-        public String getSystemIdentifier() {
-            return "anMultisystem";
         }
     }
 

@@ -40,8 +40,6 @@ public class World {
 		/** Contains all systems unordered. */
 	final Bag<BaseSystem> systemsBag;
 
-	protected final HashMap<String, BaseSystem> systemNameHashMap;
-
 	/** Manages all aspect based entity subscriptions for the world. */
 	final AspectSubscriptionManager asm;
 
@@ -98,14 +96,6 @@ public class World {
 		this.entitySpawnSystem = new EntitySpawnSystem();
 		this.entitySpawnSystem.setWorld(this);
 		this.entitySpawnSystem.setMultiWorld(this.multiWorld);
-
-		this.systemNameHashMap = new HashMap<String, BaseSystem>();
-		for(BaseSystem baseSystem : this.systemsBag) {
-			this.systemNameHashMap.put(baseSystem.getSystemIdentifier(), baseSystem);
-		}
-		for(BaseSystem baseSystem : this.multiWorld.systems) {
-			this.systemNameHashMap.put(baseSystem.getSystemIdentifier(), baseSystem);
-		}
 
 	}
 
@@ -382,14 +372,6 @@ public class World {
 	 */
 	public ImmutableBag<BaseSystem> getSystems() {
 		return systemsBag;
-	}
-
-	public HashMap<String, BaseSystem> getSystemNameHashMap() {
-		return systemNameHashMap;
-	}
-
-	public BaseSystem getSystemByName(String name) {
-		return this.systemNameHashMap.get(name);
 	}
 
 	/**

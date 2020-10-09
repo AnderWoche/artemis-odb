@@ -1,9 +1,6 @@
 package com.artemis;
 
 import com.artemis.annotations.SkipWire;
-import com.artemis.utils.NettyByteBufUtil;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Most basic system.
@@ -28,9 +25,6 @@ public abstract class BaseSystem {
     // Multi System
     @SkipWire
     protected MultiWorld multiWorld;
-
-    @SkipWire
-    protected ChannelHandlerContext ctx;
 
     @SkipWire
     private boolean isMultiSystem = false;
@@ -177,39 +171,6 @@ public abstract class BaseSystem {
         this.isMultiSystem = true;
     }
 
-    public ChannelHandlerContext getChannelHandlerContext() {
-        return ctx;
-    }
-
-    void setChannelHandlerContext(ChannelHandlerContext ctx) {
-        this.ctx = ctx;
-    }
-
-    /**
-     * Override to implement
-     * @param  byteBuf the massage
-     */
-    public void read(ChannelHandlerContext ctx, ByteBuf byteBuf) {
-
-    }
-
-    protected void write(ByteBuf byteBuf) {
-        // get Ctx and channel and other things from GLOBAL CALL
-
-		ByteBuf buffer = ctx.alloc().buffer();
-
-		// write System Name
-		NettyByteBufUtil.writeUTF16String(buffer, this.getSystemIdentifier());
-
-		// write Massage
-		buffer.writeBytes(byteBuf);
-
-		ctx.channel().writeAndFlush(buffer);
-    }
-
-    public String getSystemIdentifier() {
-        return this.getClass().getSimpleName();
-    }
 
     /**
      * see {@link World#dispose()}

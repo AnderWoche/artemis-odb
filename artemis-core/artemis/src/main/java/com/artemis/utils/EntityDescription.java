@@ -4,10 +4,6 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.EntityEdit;
 import com.artemis.World;
-import com.artemis.annotations.ClientOnly;
-import com.artemis.NettyWorld;
-import com.artemis.netty.NettyWorldType;
-import com.artemis.utils.reflect.ClassReflection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,21 +43,13 @@ public abstract class EntityDescription {
 
         // If World instanceof NettyWorld and the world is a server the ClientOnly Components get Ignored.
         World world = entityEdit.getEntity().getWorld();
-        if (world instanceof NettyWorld) {
-            NettyWorld nettyWorld = (NettyWorld) world;
-            if (nettyWorld.getWorldType() == NettyWorldType.Server) {
-                for (int i = 0; i < size; i++) {
-                    Class<? extends Component> c = this.componentClassArray.get(i);
-                    if (!ClassReflection.isAnnotationPresent(c, ClientOnly.class)) {
-                        ComponentInitializer initializer = this.componentInitializerArray.get(i);
-                        if (initializer != null) {
-                            initializer.build(entityEdit.create(c));
-                        } else {
-                            entityEdit.create(c);
-                        }
-                    }
-                }
-                return;
+        for (int i = 0; i < size; i++) {
+            Class<? extends Component> c = this.componentClassArray.get(i);
+            ComponentInitializer initializer = this.componentInitializerArray.get(i);
+            if (initializer != null) {
+                initializer.build(entityEdit.create(c));
+            } else {
+                entityEdit.create(c);
             }
         }
 

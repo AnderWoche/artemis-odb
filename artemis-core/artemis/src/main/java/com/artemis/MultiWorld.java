@@ -2,19 +2,13 @@ package com.artemis;
 
 import com.artemis.utils.Bag;
 import com.artemis.utils.EntityDescription;
-import com.artemis.utils.NettyByteBufUtil;
 import com.artemis.utils.reflect.ClassReflection;
 import com.artemis.utils.reflect.Field;
 import com.artemis.utils.reflect.ReflectionException;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandler;
 
 import java.util.HashMap;
 
-public class MultiWorld implements ChannelInboundHandler {
-
-    private ChannelHandlerContext ctx;
+public class MultiWorld {
 
     World currentWorld;
 
@@ -67,15 +61,9 @@ public class MultiWorld implements ChannelInboundHandler {
             }
         }
 
-        // inject World systems
-        for(BaseSystem baseSystem : world.getSystems()) {
-            baseSystem.setChannelHandlerContext(this.ctx);
-        }
-
         // inject MultiWorld Systems
         for (BaseSystem baseSystem : this.systems) {
             baseSystem.setWorld(world);
-            baseSystem.setChannelHandlerContext(this.ctx);
             world.inject(baseSystem);
         }
         for (MultiEntitySubscription entitySubscription : this.multiEntitySubscriptions) {
@@ -165,72 +153,5 @@ public class MultiWorld implements ChannelInboundHandler {
      */
     public void addAutoObjectInject(Object object) {
         this.autoInjectObjects.add(object);
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) {
-        this.ctx = ctx;
-        for(BaseSystem baseSystem : this.getSystems()) {
-            baseSystem.setChannelHandlerContext(this.ctx);
-        }
-        if(this.currentWorld != null) {
-            for(BaseSystem baseSystem : this.currentWorld.getSystems()) {
-                baseSystem.setChannelHandlerContext(this.ctx);
-            }
-        }
-    }
-
-    @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) {
-
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.fireExceptionCaught(cause);
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext ctx) {
-        ctx.fireChannelRegistered();
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) {
-        ctx.fireChannelUnregistered();
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        ctx.fireChannelActive();
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        ctx.fireChannelActive();
-    }
-
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ByteBuf byteBuf = (ByteBuf) msg;
-        String systemName = NettyByteBufUtil.readUTF16String(byteBuf);
-        BaseSystem networkedSystem = this.currentWorld.systemNameHashMap.get(systemName);
-
-        networkedSystem.read(ctx, byteBuf);
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.fireChannelReadComplete();
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        ctx.fireUserEventTriggered(evt);
-    }
-
-    @Override
-    public void channelWritabilityChanged(ChannelHandlerContext ctx) {
-        ctx.fireChannelWritabilityChanged();
     }
 }
