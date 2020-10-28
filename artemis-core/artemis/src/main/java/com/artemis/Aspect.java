@@ -88,7 +88,7 @@ public class Aspect {
 	/**
 	 * Returns whether this Aspect would accept the given set.
 	 */
-	public boolean isInterested(BitVector componentBits){
+	public boolean isInterested(BitVector componentBits) {
 		// Check if the entity possesses ALL of the components defined in the aspect.
 		if(!allSet.isEmpty() && !componentBits.containsAll(allSet))
 			return false;
