@@ -1,7 +1,6 @@
 package com.artemis;
 
 import com.artemis.utils.Bag;
-import com.artemis.utils.EntityDescription;
 import com.artemis.utils.reflect.ClassReflection;
 import com.artemis.utils.reflect.Field;
 import com.artemis.utils.reflect.ReflectionException;
@@ -11,11 +10,6 @@ import java.util.HashMap;
 public class MultiWorld {
 
     World currentWorld;
-
-    /**
-     * EntityDescriptions are loaded central for no duplication.
-     */
-    HashMap<String, EntityDescription> loadedEntityDescriptions = new HashMap<String, EntityDescription>();
 
     final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
     final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
@@ -129,10 +123,6 @@ public class MultiWorld {
             staticEntitySubscription.changeWorld(this.currentWorld);
         }
         this.multiEntitySubscriptions.add(staticEntitySubscription);
-    }
-
-    public void loadEntityDescription(String entityName, EntityDescription description) {
-        this.loadedEntityDescriptions.put(entityName, description);
     }
 
     public Bag<BaseSystem> getSystems() {

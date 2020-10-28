@@ -1,5 +1,7 @@
 package com.artemis.systems;
 
+import com.artemis.Aspect;
+
 public class ThreadedIntervalIteratingSystem extends ThreadedIteratingSystem {
 
     /** Accumulated delta to keep track of interval. */
@@ -9,7 +11,13 @@ public class ThreadedIntervalIteratingSystem extends ThreadedIteratingSystem {
 
     private float intervalDelta;
 
+    public ThreadedIntervalIteratingSystem(Aspect.Builder aspect, float interval) {
+        super(aspect);
+        this.interval = interval;
+    }
+
     public ThreadedIntervalIteratingSystem(float interval) {
+        super(null);
         this.interval = interval;
     }
 

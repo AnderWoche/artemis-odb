@@ -13,4 +13,7 @@ public class WorldConfigurationException extends RuntimeException {
 	public WorldConfigurationException(String msg, Throwable e) {
 		super(msg,e);
 	}
+
+	public WorldConfigurationException() {
+	}
 }

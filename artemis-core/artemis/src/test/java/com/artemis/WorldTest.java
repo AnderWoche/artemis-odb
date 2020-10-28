@@ -2,18 +2,15 @@ package com.artemis;
 
 import com.artemis.ComponentManager.ComponentIdentityResolver;
 import com.artemis.annotations.All;
-import com.artemis.annotations.Wire;
-import com.artemis.systems.IteratingSystem;
-import com.artemis.systems.VoidEntitySystem;
-import com.artemis.utils.BitVector;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.artemis.component.ComponentX;
 import com.artemis.component.ComponentY;
 import com.artemis.systems.DelayedEntityProcessingSystem;
 import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.Bag;
+import com.artemis.utils.BitVector;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openjdk.jol.info.ClassLayout;
 import org.openjdk.jol.vm.VM;
 

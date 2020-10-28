@@ -4,6 +4,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.EntityEdit;
 import com.artemis.World;
+import com.artemis.components.EntityNameComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,14 @@ public abstract class EntityDescription {
         void build(T component);
     }
 
-    private List<Class<? extends Component>> componentClassArray = new ArrayList<Class<? extends Component>>();
-    private List<ComponentInitializer<? extends Component>> componentInitializerArray = new ArrayList<ComponentInitializer<? extends Component>>();
+    private final String name;
+
+    private final List<Class<? extends Component>> componentClassArray = new ArrayList<Class<? extends Component>>();
+    private final List<ComponentInitializer<? extends Component>> componentInitializerArray = new ArrayList<ComponentInitializer<? extends Component>>();
+
+    public EntityDescription(String name) {
+        this.name = name;
+    }
 
     protected <T extends Component> void add(Class<T> component, ComponentInitializer<T> initializer) {
         this.componentClassArray.add(component);
@@ -41,29 +48,19 @@ public abstract class EntityDescription {
 
         // init Components
 
-        // If World instanceof NettyWorld and the world is a server the ClientOnly Components get Ignored.
         World world = entityEdit.getEntity().getWorld();
         for (int i = 0; i < size; i++) {
             Class<? extends Component> c = this.componentClassArray.get(i);
+            Component component = entityEdit.create(c);
+
             ComponentInitializer initializer = this.componentInitializerArray.get(i);
             if (initializer != null) {
-                initializer.build(entityEdit.create(c));
-            } else {
-                entityEdit.create(c);
+                initializer.build(component);
             }
         }
 
-        for (int i = 0; i < size; i++) {
-            Class<? extends Component> c = this.componentClassArray.get(i);
-            ComponentInitializer initializer = this.componentInitializerArray.get(i);
-            if (initializer != null) {
-                initializer.build(entityEdit.create(c));
-            } else {
-                entityEdit.create(c);
-            }
-        }
-
-
+        // init the EntityNameComponent to spawn a second entity from the name later.
+        entityEdit.create(EntityNameComponent.class).name = this.name;
     }
 
     public int create(World world) {
@@ -78,5 +75,8 @@ public abstract class EntityDescription {
         return entity;
     }
 
+    public String getName() {
+        return this.name;
+    }
 }
 

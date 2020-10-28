@@ -76,10 +76,12 @@ public abstract class ThreadedIteratingSystem extends BaseEntitySystem {
             });
             this.runningTasks[k] = process;
         }
-        for(int i = 0; i < this.runningTasks.length; i++) {
+        for(int i = this.runningTasks.length - 1; i >= 0; i--) {
             try {
                 this.runningTasks[i].get();
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
