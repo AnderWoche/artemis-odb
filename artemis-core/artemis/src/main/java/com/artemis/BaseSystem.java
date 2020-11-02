@@ -101,6 +101,7 @@ public abstract class BaseSystem {
      * component mappers are automatically injected by artemis.
      */
     protected void initialize() {
+        this.isInitialized = true;
     }
 
     /**

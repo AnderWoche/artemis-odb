@@ -71,7 +71,6 @@ public class MultiWorld {
         for (BaseSystem baseSystem : systems) {
             if (!baseSystem.isInitialized) {
                 baseSystem.initialize();
-                baseSystem.isInitialized = true;
             }
         }
     }
