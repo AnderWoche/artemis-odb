@@ -2,6 +2,7 @@ package com.artemis;
 
 import com.artemis.injection.CachedInjector;
 import com.artemis.injection.Injector;
+import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.artemis.utils.IntBag;
@@ -167,6 +168,17 @@ public class World {
 
 		if (exceptions.size() > 0)
 			throw new ArtemisMultiException(exceptions);
+	}
+
+	public int getAmountOfEntityProcesses() {
+		int iterationAmount = 0;
+		for (BaseSystem baseSystem : this.systemsBag) {
+			if (baseSystem instanceof IteratingSystem) {
+				IteratingSystem iteratingSystem = (IteratingSystem) baseSystem;
+				iterationAmount += iteratingSystem.getSubscription().getEntities().size();
+			}
+		}
+		return iterationAmount;
 	}
 
 	/**

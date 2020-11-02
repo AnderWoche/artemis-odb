@@ -22,6 +22,12 @@ public class MultiWorldTest {
         private ComponentMapper<WorldTest.AnComponent> mapper;
 
         @Override
+        protected void initialize() {
+            super.setEnabled(true); // must be true for the tests
+            super.initialize();
+        }
+
+        @Override
         protected void process(int entityId) {
             WorldTest.AnComponent anComponent = mapper.get(entityId);
             anComponent.name = super.world.toString();
@@ -87,6 +93,24 @@ public class MultiWorldTest {
     }
 
     @Test
+    public void system_MultiWorld_init_test() {
+        MultiWorldConfiguration worldConfiguration = new MultiWorldConfiguration();
+        worldConfiguration.with(new MultiSystem());
+
+        MultiWorld multiWorld = new MultiWorld(worldConfiguration);
+
+        WorldConfigurationBuilder worldConfigurationBuilder = new WorldConfigurationBuilder();
+
+        World w = new World(worldConfigurationBuilder.setMultiWorld(multiWorld).build());
+
+        w.process();
+
+        boolean isInitialized = multiWorld.getSystem(MultiSystem.class).isInitialized();
+
+        Assert.assertTrue(isInitialized);
+    }
+
+    @Test
     public void system_overlap_on_more_worlds_test() {
         MultiWorld multiWorld = new MultiWorld();
 
@@ -129,19 +153,6 @@ public class MultiWorldTest {
         }
 
     }
-
-    @Test
-    public void world_system_netty_test() {
-        MultiWorld multiWorld1 = new MultiWorld(new MultiWorldConfiguration().with(new MultiSystem()));
-        World world1 = new World(new WorldConfigurationBuilder().setMultiWorld(multiWorld1).build());
-
-        MultiWorld multiWorld2 = new MultiWorld(new MultiWorldConfiguration().with(new MultiSystem()));
-        World world2 = new World(new WorldConfigurationBuilder().setMultiWorld(multiWorld2).build());
-
-        // TEST Missing COMMING SOON
-
-    }
-
 
     private World world;
 

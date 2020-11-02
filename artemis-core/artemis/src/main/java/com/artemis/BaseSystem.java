@@ -172,6 +172,9 @@ public abstract class BaseSystem {
         this.isMultiSystem = true;
     }
 
+    public boolean isInitialized() {
+        return isInitialized;
+    }
 
     /**
      * see {@link World#dispose()}

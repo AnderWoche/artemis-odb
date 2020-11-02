@@ -1,5 +1,6 @@
 package com.artemis;
 
+import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.Bag;
 import com.artemis.utils.reflect.ClassReflection;
 import com.artemis.utils.reflect.Field;
@@ -11,12 +12,12 @@ public class MultiWorld {
 
     World currentWorld;
 
-    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<Class<? extends BaseSystem>, BaseSystem>();
-    final Bag<BaseSystem> systems = new Bag<BaseSystem>(BaseSystem.class);
+    final HashMap<Class<? extends BaseSystem>, BaseSystem> systemsMap = new HashMap<>();
+    final Bag<BaseSystem> systems = new Bag<>(BaseSystem.class);
 
-    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<MultiEntitySubscription>(MultiEntitySubscription.class);
+    final Bag<MultiEntitySubscription> multiEntitySubscriptions = new Bag<>(MultiEntitySubscription.class);
 
-    final Bag<Object> autoInjectObjects = new Bag<Object>(Object.class);
+    final Bag<Object> autoInjectObjects = new Bag<>(Object.class);
 
 
     public MultiWorld() {
@@ -68,9 +69,12 @@ public class MultiWorld {
         }
 
         //init system if it is not initialized
-        for (BaseSystem baseSystem : systems) {
+        BaseSystem[] data = this.systems.getData();
+        for (int i = 0, s = this.systems.size(); i < s; i++) {
+            BaseSystem baseSystem = data[i];
             if (!baseSystem.isInitialized) {
                 baseSystem.initialize();
+                baseSystem.isInitialized = true;
             }
         }
     }
@@ -85,6 +89,17 @@ public class MultiWorld {
                 }
             }
         }
+    }
+
+    public int getAmountOfEntityProcesses() {
+        int iterationAmount = 0;
+        for (BaseSystem baseSystem : this.systems) {
+            if (baseSystem instanceof IteratingSystem) {
+                IteratingSystem iteratingSystem = (IteratingSystem) baseSystem;
+                iterationAmount += iteratingSystem.getSubscription().getEntities().size();
+            }
+        }
+        return iterationAmount;
     }
 
     private void injectObject(Object object) {
