@@ -382,7 +382,11 @@ public class World {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends BaseSystem> T getSystem(Class<T> type) {
-		return (T) partition.systems.get(type);
+		T system = (T) partition.systems.get(type);
+		if(system == null) {
+			system = this.multiWorld.getSystem(type);
+		}
+		return system;
 	}
 
 	/** Set strategy for invoking systems on {@link #process()}. */
