@@ -2,6 +2,7 @@ package com.artemis;
 
 import com.artemis.annotations.DelayedComponentRemoval;
 import com.artemis.utils.Bag;
+import com.artemis.utils.IntBag;
 
 import static com.artemis.utils.reflect.ClassReflection.isAnnotationPresent;
 
@@ -147,6 +148,17 @@ public class ComponentMapper<A extends Component> extends BaseComponentMapper<A>
         return (A) ((pool != null)
                 ? pool.obtain()
                 : ComponentManager.newInstance(type.getType()));
+    }
+
+    public IntBag filter(IntBag returnBag, IntBag entities) {
+        int[] ids = entities.getData();
+        for(int i = 0, s = entities.size(); i < s; i++) {
+            int entity = ids[i];
+            if(this.has(entity)) {
+                returnBag.add(entity);
+            }
+        }
+        return returnBag;
     }
 
 }
